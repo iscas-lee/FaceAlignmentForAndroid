@@ -24,8 +24,8 @@ enum TRACK_METHOD {
 
 class KalmanParam {
 public:
-    static float R;
-    static float Q;
+    float R;
+    float Q;
     float K;
     float P;
     float x;
@@ -78,6 +78,8 @@ public:
     std::vector<BoundingBox> FaceDetect(cv::Mat grayImg);
     // 人脸特征点识别
     cv::Mat_<double> FaceShape(cv::Mat grayImg, BoundingBox face_box);
+
+    void FaceAlignAndDraw(cv::Mat srcImg, cv::Mat resImg, IMG_CODE srcCode, IMG_CODE resCode);
 
     void UpdateImage(cv::Mat grayImg);
     std::vector<cv::Mat_<double> > GetAllFaceShape();

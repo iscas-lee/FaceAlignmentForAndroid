@@ -4,7 +4,8 @@
 
 using namespace std;
 
-void FaceTracker::Init(std::string modelPath, TRACK_METHOD method = FACE_3000FPS, int faces_max_num = 5) {
+
+void FaceTracker::Init(std::string modelPath, TRACK_METHOD method, int faces_max_num) {
     method_ = method;
     faces_max_num_ = faces_max_num;
     lbf_regressor_.Load(modelPath+"LBF.model", modelPath+"Regressor.model");
@@ -78,4 +79,20 @@ void FaceTracker::UpdateShapeByKalman(cv::Mat_<double> face_shape, int index) {
             faces_shapes_[index](i,j) = kalman_params_[index][i][j].KalmanUpdate(face_shape(i,j), pre_optimal);
         }
     }
+}
+
+void FaceTracker::FaceAlignAndDraw(cv::Mat srcImg, cv::Mat resImg, IMG_CODE srcCode, IMG_CODE resCode) {
+    cv::Mat grayImg(srcImg.rows,srcImg.cols,CV_8UC1),rgbImg(srcImg.rows,srcImg.cols,CV_8UC3);
+    ColorConvert(srcImg,grayImg,srcCode,IMG_GRAY);
+    ColorConvert(srcImg,rgbImg,srcCode,IMG_RGB);
+
+    vector<BoundingBox> faces_boxes = FaceDetect(grayImg);
+
+    for(int i=0; i<faces_boxes.size(); i++) {
+        BoundingBox boundingbox = faces_boxes[i];
+        cv::rectangle(rgbImg, cvPoint(boundingbox.start_x,boundingbox.start_y),
+                cvPoint(boundingbox.start_x+boundingbox.width,boundingbox.start_y+boundingbox.height),cv::Scalar(0,255,0), 1, 8, 0);
+    }
+
+
 }
