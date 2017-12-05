@@ -66,3 +66,16 @@ int FaceTracker::cvImg2Code(IMG_CODE srcCode, IMG_CODE resCode) {
                             {CV_BGRA2GRAY,  CV_BGRA2RGB,    -1}};
     return code2code[srcCode][resCode];
 }
+
+
+void FaceTracker::UpdateShapeByKalman(cv::Mat_<double> face_shape, int index) { 
+    int landmark_num = face_shape.rows;
+    //double p1;
+    //std::vector<KalmanParam[2]> *kalman_ptr = &kalman_params_[index]; 
+    for(int i=0;i<landmark_num; i++) {
+        for(int j=0; j<2; j++) {
+            float pre_optimal = faces_shapes_[index](i,j);
+            faces_shapes_[index](i,j) = kalman_params_[index][i][j].KalmanUpdate(face_shape(i,j), pre_optimal);
+        }
+    }
+}

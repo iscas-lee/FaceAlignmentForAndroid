@@ -33,7 +33,16 @@ public:
         R=0.01;
         Q=0.0001;
     }
+
+    float KalmanUpdate(float observe, float pre_opt) {
+        float p1 = P + Q;
+        K = p1/(p1+R);
+        float opt = observe + K*(observe - pre_opt);
+        P = (1-K)*p1;
+        return opt;
+    }
 };
+
 
 class FaceTracker {
 private:
@@ -70,11 +79,11 @@ public:
     // 人脸特征点识别
     cv::Mat_<double> FaceShape(cv::Mat grayImg, BoundingBox face_box);
 
-    void UpdataImage(cv::Mat grayImg);
+    void UpdateImage(cv::Mat grayImg);
     std::vector<cv::Mat_<double> > GetAllFaceShape();
     cv::Mat_<double> GetOneFaceShape();
 
-    void KalmanFilter(cv::Mat_<double>& face_shape, std::vector<KalmanParam[2]>& kalman_param);
+    void UpdateShapeByKalman(cv::Mat_<double> face_shape, int index);
 
 
     void ColorConvert(cv::Mat srcImg, cv::Mat resImg, IMG_CODE srcCode, IMG_CODE resCode);
