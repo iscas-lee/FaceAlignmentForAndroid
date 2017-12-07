@@ -89,7 +89,10 @@ public class MainActivity extends AppCompatActivity {
                 bitmap.getPixels(pix,0, w, 0, 0, w, h);
                 int[] resultpix = new int[w*h];
                 face_num ++;
+                long startMs = System.currentTimeMillis();
                 rgb2Gray(pix,resultpix,w,h,face_num);
+                long endMs = System.currentTimeMillis();
+                long spendMs = endMs - startMs;
                 Bitmap result = Bitmap.createBitmap(w,h, Bitmap.Config.ARGB_8888);
                 result.setPixels(resultpix, 0, w, 0, 0,w, h);
 
@@ -97,6 +100,11 @@ public class MainActivity extends AppCompatActivity {
 
                 TextView tv = (TextView) findViewById(R.id.textView);
                 tv.setText(stringFromJNI(face_num));
+
+
+
+                TextView tv2 = (TextView) findViewById(R.id.textView2);
+                tv2.setText(Long.toString(spendMs));
             }
         });
 
