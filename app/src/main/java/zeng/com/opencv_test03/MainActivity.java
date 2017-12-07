@@ -24,6 +24,7 @@ import java.io.InputStreamReader;
 public class MainActivity extends AppCompatActivity {
 
     private Button btnOne,btnTwo;
+    int face_num=100;
 
 
     // Used to load the 'native-lib' library on application startup.
@@ -43,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
         }catch (Exception e) {
 
         }
+        faceTrackerInit();
 
 
 
@@ -58,26 +60,20 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 ImageView img = (ImageView) findViewById(R.id.imageView2);
                 Bitmap bitmap = ((BitmapDrawable) getResources().getDrawable(
-                        R.drawable.people)).getBitmap();
+                        R.drawable.face)).getBitmap();
                 img.setImageBitmap(bitmap);
+                int w = bitmap.getWidth(), h=bitmap.getHeight();
+                int[] pix = new int[w*h];
+                int[] resultpix = new int[w*h];
+                face_num--;
+                rgb2Gray(pix,resultpix,w,h,face_num);
+                Bitmap result = Bitmap.createBitmap(w,h, Bitmap.Config.ARGB_8888);
+                result.setPixels(resultpix, 0, w, 0, 0,w, h);
+
+                img.setImageBitmap(result);
 
                 TextView tv = (TextView) findViewById(R.id.textView);
-                StringBuffer strsBuffer = new StringBuffer();
-                try {
-                    File file = new File(Environment.getExternalStorageDirectory()
-                            .getCanonicalPath() + "/1.txt");
-                    FileInputStream fileR = new FileInputStream(file);
-                    BufferedReader reads = new BufferedReader(
-                            new InputStreamReader(fileR));
-                    String st = null;
-                    while ((st = reads.readLine()) != null) {
-                        strsBuffer.append(st);
-                    }
-                    fileR.close();
-                    tv.setText(strsBuffer.toString());
-                }catch (Exception e){
-                    tv.setText("11");
-                }
+                tv.setText(stringFromJNI(face_num));
             }
         });
 
@@ -86,20 +82,21 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 ImageView img = (ImageView) findViewById(R.id.imageView2);
                 Bitmap bitmap = ((BitmapDrawable) getResources().getDrawable(
-                        R.drawable.people)).getBitmap();
+                        R.drawable.face)).getBitmap();
 
                 int w = bitmap.getWidth(), h=bitmap.getHeight();
                 int[] pix = new int[w*h];
                 bitmap.getPixels(pix,0, w, 0, 0, w, h);
                 int[] resultpix = new int[w*h];
-                rgb2Gray(pix,resultpix,w,h);
+                face_num ++;
+                rgb2Gray(pix,resultpix,w,h,face_num);
                 Bitmap result = Bitmap.createBitmap(w,h, Bitmap.Config.ARGB_8888);
                 result.setPixels(resultpix, 0, w, 0, 0,w, h);
 
                 img.setImageBitmap(result);
 
                 TextView tv = (TextView) findViewById(R.id.textView);
-                tv.setText(stringFromJNI());
+                tv.setText(stringFromJNI(face_num));
             }
         });
 
@@ -131,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
      * A native method that is implemented by the 'native-lib' native library,
      * which is packaged with this application.
      */
-    public native String stringFromJNI();
-    public native int rgb2Gray(int[] srcImg, int[] resImg, int w, int h);
+    public native int faceTrackerInit();
+    public native String stringFromJNI(int num);
+    public native int rgb2Gray(int[] srcImg, int[] resImg, int w, int h, int num);
 }

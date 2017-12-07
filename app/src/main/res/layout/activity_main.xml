@@ -8,46 +8,48 @@
 
     <Button
         android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="91dp"
-        android:layout_marginTop="66dp"
+        android:layout_width="170dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="107dp"
+        android:layout_marginStart="107dp"
         android:text="Button"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="55dp"
-        android:layout_marginTop="66dp"
+        android:layout_width="170dp"
+        android:layout_height="39dp"
+        android:layout_marginEnd="107dp"
+        android:layout_marginStart="107dp"
         android:text="Button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button" />
 
     <ImageView
         android:id="@+id/imageView2"
-        android:layout_width="273dp"
-        android:layout_height="287dp"
-        android:layout_marginBottom="47dp"
-        android:layout_marginEnd="55dp"
-        android:layout_marginStart="56dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="376dp"
+        android:layout_height="335dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginStart="4dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button2"
         app:srcCompat="@drawable/cat2" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="17dp"
-        android:layout_marginEnd="181dp"
-        android:layout_marginStart="145dp"
+        android:layout_marginEnd="163dp"
+        android:layout_marginStart="163dp"
+        android:layout_marginTop="11dp"
         android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
 
 </android.support.constraint.ConstraintLayout>

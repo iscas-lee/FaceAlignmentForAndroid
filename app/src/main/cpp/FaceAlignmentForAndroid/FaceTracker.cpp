@@ -16,8 +16,8 @@ vector<BoundingBox> FaceTracker::FaceDetect(cv::Mat grayImg) {
     vector<cv::Rect> faces;
     vector<BoundingBox> faces_boxes;
 
-    float scale = smallImg_row_*1.0/grayImg.rows;
-    cv::Mat smallImg( smallImg_row_, cvRound(grayImg.cols * scale), CV_8UC1 );
+    float scale = grayImg.rows*1.0/smallImg_row_;
+    cv::Mat smallImg( smallImg_row_, cvRound(grayImg.cols / scale), CV_8UC1 );
     resize( grayImg, smallImg, smallImg.size(), 0, 0, cv::INTER_LINEAR );
     equalizeHist( smallImg, smallImg );
 
@@ -92,7 +92,13 @@ void FaceTracker::FaceAlignAndDraw(cv::Mat srcImg, cv::Mat resImg, IMG_CODE srcC
         BoundingBox boundingbox = faces_boxes[i];
         cv::rectangle(rgbImg, cvPoint(boundingbox.start_x,boundingbox.start_y),
                 cvPoint(boundingbox.start_x+boundingbox.width,boundingbox.start_y+boundingbox.height),cv::Scalar(0,255,0), 1, 8, 0);
+        cv::Mat_<double> current_shape = lbf_regressor_.Predict(grayImg,boundingbox,1);
+        for(int i = 0;i < current_shape.rows;i++){
+            cv::circle(rgbImg,cv::Point2d(current_shape(i,0),current_shape(i,1)),3,cv::Scalar(255,255,255),-1,8,0);
+        }
     }
+
+    ColorConvert(rgbImg, resImg, IMG_RGB, resCode);
 
 
 }

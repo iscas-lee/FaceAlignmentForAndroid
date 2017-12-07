@@ -62,7 +62,7 @@ private:
 
 public:
     FaceTracker() {
-        smallImg_row_ = 500;
+        smallImg_row_ = 400;
         faces_max_num_ = 5;
 
     }

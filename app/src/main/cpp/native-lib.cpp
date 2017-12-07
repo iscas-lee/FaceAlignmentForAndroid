@@ -6,31 +6,37 @@
 #include "FaceAlignmentForAndroid/FaceTracker.h"
 
 FaceTracker face_tracker;
+int filename_i = 0;
+std::string modelpath = "/storage/emulated/0/faceTest/";
+
+extern "C"
+JNIEXPORT jint
+JNICALL
+Java_zeng_com_opencv_1test03_MainActivity_faceTrackerInit(
+        JNIEnv *env,
+        jobject /* this */) {
+    face_tracker.Init(modelpath+"Model/");
+    return 0;
+}
 
 extern "C"
 JNIEXPORT jstring
 JNICALL
 Java_zeng_com_opencv_1test03_MainActivity_stringFromJNI(
         JNIEnv *env,
-        jobject /* this */) {
-    std::string hello="111" ;
-    hello = "222";
-    std::ifstream infile;
-    infile.open("/storage/emulated/0/1.txt");
-    if(infile.is_open()){
-        getline(infile, hello);
-        hello = hello+" read 1.txt";
-    }
-    else
-        hello = "can't read 1.txt";
-    return env->NewStringUTF(hello.c_str());
+        jobject /* this */,int num) {
+    std::string filename;
+    std::ostringstream s1;
+    s1 << 1000+num;
+    filename = s1.str().substr(1,3)+".jpg";
+    return env->NewStringUTF(filename.c_str());
 }
 
 extern "C"
 JNIEXPORT jint
 JNICALL
 Java_zeng_com_opencv_1test03_MainActivity_rgb2Gray(
-        JNIEnv *env, jobject , jintArray srcImg, jintArray resImg, int w, int h) {
+        JNIEnv *env, jobject , jintArray srcImg, jintArray resImg, int w, int h, int num) {
     jint *srcbuf = env->GetIntArrayElements(srcImg, JNI_FALSE);
     cv::Mat srcImgMat(h, w, CV_8UC4, (unsigned char *) srcbuf);
 
@@ -39,11 +45,19 @@ Java_zeng_com_opencv_1test03_MainActivity_rgb2Gray(
 
     cv::Mat imgGray(h, w,  CV_8UC1);
 
-    cv::Mat rgbImgMat = cv::imread("/storage/emulated/0/people.jpg");
+    std::string filename;
+    std::ostringstream s1;
+    s1 << 1000+num;
+    filename = s1.str().substr(1,3)+".jpg";
 
-    face_tracker.ColorConvert(srcImgMat,imgGray,IMG_BGRA,IMG_GRAY);
+    cv::Mat rgbImgMatTemp = cv::imread(modelpath+"test/"+filename);
+    cv::Mat rgbImgMat(h, w, CV_8UC3);
+    cv::resize(rgbImgMatTemp,rgbImgMat,rgbImgMat.size(),0,0,cv::INTER_LINEAR);
+
+    //face_tracker.ColorConvert(srcImgMat,imgGray,IMG_BGRA,IMG_GRAY);
     //face_tracker.ColorConvert(rgbImgMat,imgGray,IMG_RGB,IMG_GRAY);
-    face_tracker.ColorConvert(imgGray,resImgMat,IMG_GRAY,IMG_BGRA);
+    //face_tracker.ColorConvert(rgbImgMat,resImgMat,IMG_RGB,IMG_BGRA);
+    face_tracker.FaceAlignAndDraw(rgbImgMat,resImgMat,IMG_RGB,IMG_BGRA);
 
 
 
