@@ -10,6 +10,13 @@
 #define __FaceTracker_H__
 
 #include "LBFRegressor.h"
+#include "FaceShape.h"
+
+#include <dlib/opencv.h>
+#include <dlib/image_processing/frontal_face_detector.h>
+#include <dlib/image_processing/render_face_detections.h>
+#include <dlib/image_processing.h>
+
 
 enum IMG_CODE {
     IMG_GRAY = 0,
@@ -17,78 +24,69 @@ enum IMG_CODE {
     IMG_BGRA = 2,
 };
 
-enum TRACK_METHOD {
-    FACE_3000FPS = 0,
-    FACE_DLIB = 1,
+enum SHAPE_METHOD {
+    SHAPE_LBF3000 = 0,
+    SHAPE_DLIB = 1,
 };
 
-class KalmanParam {
-public:
-    float R;
-    float Q;
-    float K;
-    float P;
-    float x;
-    KalmanParam() {
-        R=0.01;
-        Q=0.0001;
-    }
-
-    float KalmanUpdate(float observe, float pre_opt) {
-        float p1 = P + Q;
-        K = p1/(p1+R);
-        float opt = observe + K*(observe - pre_opt);
-        P = (1-K)*p1;
-        return opt;
-    }
+enum DETECT_METHOD {
+    DETECT_OPENCV = 0,
+    DETECT_DLIB = 1,
 };
-
 
 class FaceTracker {
 private:
     LBFRegressor lbf_regressor_;
-    cv::CascadeClassifier face_cascade_;
-    TRACK_METHOD method_;
+    cv::CascadeClassifier opencv_cascade_;
+
+    dlib::frontal_face_detector dlib_detector;
+    dlib::shape_predictor dlib_shape_pred;
+    
+    DETECT_METHOD detect_method_;
+    SHAPE_METHOD shape_method_;
 
     int smallImg_row_;
-    int faces_max_num_;
-
-    std::vector<BoundingBox> faces_boxes_;
-    std::vector<cv::Mat_<double> > faces_shapes_;
-    std::vector<std::vector<KalmanParam[2]> > kalman_params_;
+    int faces_max_num_;  
+    //std::vector<std::vector<KalmanParam[2]> > kalman_params_;
 
     int cvImg2Code(IMG_CODE srcCode, IMG_CODE resCode);
 
-
 public:
+    std::vector<BoundingBox> faces_boxes_;
+    std::vector<FaceShape> faces_shapes_;
+    bool Kalman_state_;
+
     FaceTracker() {
         smallImg_row_ = 400;
         faces_max_num_ = 5;
-
+        Kalman_state_ = false; 
     }
     ~FaceTracker() {
 
     }
     
     // 初始化
-    void Init(std::string modelPath, TRACK_METHOD method = FACE_3000FPS, int faces_max_num = 5);
-    //void Init(std::string modelPath);
+    void init(  std::string modelPath, 
+                int faces_max_num = 5, 
+                DETECT_METHOD detect_method = DETECT_OPENCV, 
+                SHAPE_METHOD shape_method = SHAPE_LBF3000);
 
+    
     // 人脸检测
-    std::vector<BoundingBox> FaceDetect(cv::Mat grayImg);
+    std::vector<BoundingBox> calculateFaceBox(cv::Mat& grayImg);
     // 人脸特征点识别
-    cv::Mat_<double> FaceShape(cv::Mat grayImg, BoundingBox face_box);
+    FaceShape calculateFaceShape(cv::Mat& grayImg, BoundingBox face_box);
 
-    void FaceAlignAndDraw(cv::Mat srcImg, cv::Mat resImg, IMG_CODE srcCode, IMG_CODE resCode);
+    void faceAlignAndDraw(cv::Mat& srcImg, cv::Mat& resImg, IMG_CODE srcCode, IMG_CODE resCode);
 
-    void UpdateImage(cv::Mat grayImg);
-    std::vector<cv::Mat_<double> > GetAllFaceShape();
-    cv::Mat_<double> GetOneFaceShape();
+    void updateImage(cv::Mat grayImg);
+    std::vector<cv::Mat_<double> > getAllFaceShape();
+    cv::Mat_<double> getOneFaceShape();
 
-    void UpdateShapeByKalman(cv::Mat_<double> face_shape, int index);
+//    void updateShapeByKalman(cv::Mat_<double>& face_shape, int index);
 
 
-    void ColorConvert(cv::Mat srcImg, cv::Mat resImg, IMG_CODE srcCode, IMG_CODE resCode);
+    void colorConvert(cv::Mat& srcImg, cv::Mat& resImg, IMG_CODE srcCode, IMG_CODE resCode);
 
 
 };

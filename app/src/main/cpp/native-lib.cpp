@@ -15,7 +15,7 @@ JNICALL
 Java_zeng_com_opencv_1test03_MainActivity_faceTrackerInit(
         JNIEnv *env,
         jobject /* this */) {
-    face_tracker.Init(modelpath+"Model/");
+    face_tracker.init(modelpath+"Model/");
     return 0;
 }
 
@@ -57,7 +57,7 @@ Java_zeng_com_opencv_1test03_MainActivity_rgb2Gray(
     //face_tracker.ColorConvert(srcImgMat,imgGray,IMG_BGRA,IMG_GRAY);
     //face_tracker.ColorConvert(rgbImgMat,imgGray,IMG_RGB,IMG_GRAY);
     //face_tracker.ColorConvert(rgbImgMat,resImgMat,IMG_RGB,IMG_BGRA);
-    face_tracker.FaceAlignAndDraw(rgbImgMat,resImgMat,IMG_RGB,IMG_BGRA);
+    face_tracker.faceAlignAndDraw(rgbImgMat,resImgMat,IMG_RGB,IMG_BGRA);
 
 
 

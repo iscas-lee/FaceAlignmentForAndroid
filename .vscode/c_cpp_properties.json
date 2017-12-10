@@ -52,7 +52,8 @@
                 "C:/Program Files (x86)/Windows Kits/10/Include/10.0.16299.0/shared",
                 "C:/Program Files (x86)/Windows Kits/10/Include/10.0.16299.0/winrt",
                 "${workspaceRoot}",
-                "${workspaceRoot}/OpenCV-android-sdk/sdk/native/jni/include"
+                "${workspaceRoot}/OpenCV-android-sdk/sdk/native/jni/include",
+                "${workspaceRoot}/dlib-19.7"
             ],
             "defines": [
                 "_DEBUG",
