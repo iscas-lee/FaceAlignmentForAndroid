@@ -25,7 +25,7 @@ void FaceTracker::init(std::string modelPath, int faces_max_num, DETECT_METHOD d
     }   
 }
 
-vector<BoundingBox> FaceTracker::getFaceBox(cv::Mat& srcImg, IMG_CODE srcCode) {  
+vector<BoundingBox> FaceTracker::calculateFaceBox(cv::Mat& srcImg, IMG_CODE srcCode) {  
     vector<BoundingBox> faces_boxes;
 
     if(detect_method_ == DETECT_OPENCV) {
@@ -75,7 +75,7 @@ vector<BoundingBox> FaceTracker::getFaceBox(cv::Mat& srcImg, IMG_CODE srcCode) {
 }
 
 
-FaceShape FaceTracker::getFaceShape(cv::Mat& srcImg, BoundingBox face_box, IMG_CODE srcCode) {
+FaceShape FaceTracker::calculateFaceShape(cv::Mat& srcImg, BoundingBox face_box, IMG_CODE srcCode) {
     FaceShape face_shape;
     if(shape_method_ == SHAPE_LBF3000) {
         cv::Mat grayImg(srcImg.rows,srcImg.cols,CV_8UC1);
@@ -118,13 +118,13 @@ void FaceTracker::faceAlignAndDraw(cv::Mat& srcImg, cv::Mat& resImg, IMG_CODE sr
     // colorConvert(srcImg,grayImg,srcCode,IMG_GRAY);
     colorConvert(srcImg,rgbImg,srcCode,IMG_RGB);
 
-    vector<BoundingBox> faces_boxes = getFaceBox(srcImg, srcCode);
+    vector<BoundingBox> faces_boxes = calculateFaceBox(srcImg, srcCode);
 
     for(int i=0; i<faces_boxes.size(); i++) {
         BoundingBox boundingbox = faces_boxes[i];
         cv::rectangle(rgbImg, cvPoint(boundingbox.start_x,boundingbox.start_y),
                 cvPoint(boundingbox.start_x+boundingbox.width,boundingbox.start_y+boundingbox.height),cv::Scalar(0,255,0), 1, 8, 0);
-        FaceShape current_shape = getFaceShape(srcImg,boundingbox,srcCode);
+        FaceShape current_shape = calculateFaceShape(srcImg,boundingbox,srcCode);
         for(int i = 0;i < current_shape.landmark_num();i++){
             cv::circle(rgbImg, cv::Point2d(current_shape(i).row, current_shape(i).col), 3, cv::Scalar(255,255,255),-1,8,0);
         }
@@ -134,11 +134,11 @@ void FaceTracker::faceAlignAndDraw(cv::Mat& srcImg, cv::Mat& resImg, IMG_CODE sr
 }
 
 void FaceTracker::faceAlignment(cv::Mat& srcImg, IMG_CODE srcCode) {
-    faces_boxes_ = getFaceBox(srcImg, srcCode);
+    faces_boxes_ = calculateFaceBox(srcImg, srcCode);
     if(Kalman_state_ == false) {
         faces_shapes_.clear();
         for(int i=0; i<faces_boxes_.size(); i++) {
-            faces_shapes_.push_back(getFaceShape(srcImg, faces_boxes_[i], srcCode));
+            faces_shapes_.push_back(calculateFaceShape(srcImg, faces_boxes_[i], srcCode));
         }
         
     }

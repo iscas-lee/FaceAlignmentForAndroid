@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/FaceAlignmentForAndroid.iml" filepath="$PROJECT_DIR$/FaceAlignmentForAndroid.iml" />
-      <module fileurl="file://D:\zeng\FaceAlignmentForAndroid\OpenCV_Test03.iml" filepath="D:\zeng\FaceAlignmentForAndroid\OpenCV_Test03.iml" />
+      <module fileurl="file://$PROJECT_DIR$/OpenCV_Test03.iml" filepath="$PROJECT_DIR$/OpenCV_Test03.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

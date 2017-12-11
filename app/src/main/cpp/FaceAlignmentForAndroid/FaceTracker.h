@@ -73,12 +73,15 @@ public:
 
     
     // 人脸检测
-    std::vector<BoundingBox> getFaceBox(cv::Mat& srcImg, IMG_CODE srcCode);
+    std::vector<BoundingBox> calculateFaceBox(cv::Mat& srcImg, IMG_CODE srcCode);
     // 人脸特征点识别
-    FaceShape getFaceShape(cv::Mat& srcImg, BoundingBox face_box, IMG_CODE srcCode);
+    FaceShape calculateFaceShape(cv::Mat& srcImg, BoundingBox face_box, IMG_CODE srcCode);
 
     void faceAlignAndDraw(cv::Mat& srcImg, cv::Mat& resImg, IMG_CODE srcCode, IMG_CODE resCode);
     void faceAlignment(cv::Mat& srcImg, IMG_CODE srcCode);
+
+    std::vector<BoundingBox> getAllFaceBox();
+    BoundingBox getOneFaceBox();
 
     void updateImage(cv::Mat grayImg);
     std::vector<cv::Mat_<double> > getAllFaceShape();
