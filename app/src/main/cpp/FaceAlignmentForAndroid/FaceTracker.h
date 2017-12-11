@@ -39,8 +39,8 @@ private:
     LBFRegressor lbf_regressor_;
     cv::CascadeClassifier opencv_cascade_;
 
-    dlib::frontal_face_detector dlib_detector;
-    dlib::shape_predictor dlib_shape_pred;
+    dlib::frontal_face_detector dlib_detector_;
+    dlib::shape_predictor dlib_shape_pred_;
     
     DETECT_METHOD detect_method_;
     SHAPE_METHOD shape_method_;
@@ -57,7 +57,7 @@ public:
     bool Kalman_state_;
 
     FaceTracker() {
-        smallImg_row_ = 400;
+        smallImg_row_ = 300;
         faces_max_num_ = 5;
         Kalman_state_ = false; 
     }
@@ -73,11 +73,12 @@ public:
 
     
     // 人脸检测
-    std::vector<BoundingBox> calculateFaceBox(cv::Mat& grayImg);
+    std::vector<BoundingBox> getFaceBox(cv::Mat& srcImg, IMG_CODE srcCode);
     // 人脸特征点识别
-    FaceShape calculateFaceShape(cv::Mat& grayImg, BoundingBox face_box);
+    FaceShape getFaceShape(cv::Mat& srcImg, BoundingBox face_box, IMG_CODE srcCode);
 
     void faceAlignAndDraw(cv::Mat& srcImg, cv::Mat& resImg, IMG_CODE srcCode, IMG_CODE resCode);
+    void faceAlignment(cv::Mat& srcImg, IMG_CODE srcCode);
 
     void updateImage(cv::Mat grayImg);
     std::vector<cv::Mat_<double> > getAllFaceShape();

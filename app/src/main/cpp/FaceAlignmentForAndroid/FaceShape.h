@@ -14,6 +14,10 @@
 
 #include <vector>
 #include <opencv2/opencv.hpp>
+#include <dlib/opencv.h>
+#include <dlib/image_processing/frontal_face_detector.h>
+#include <dlib/image_processing/render_face_detections.h>
+#include <dlib/image_processing.h>
 
 class KalmanParam {
 public:
@@ -81,6 +85,14 @@ public:
             pixel_vector[i].col = shape_mat(i,1);
         }
         kalman_update_times = 0;
+    }
+
+    void set(dlib::full_object_detection& shape_dlib) {
+        pixel_vector.resize(shape_dlib.num_parts);
+        for(int i=0; i<shape_dlib.num_parts; i++) {
+            pixel_vector[i].row = shape_dlib.part(i).x();
+            pixel_vector[i].col = shape_dlib.part(i).y();
+        }
     }
 
     bool updateByKalman(cv::Mat_<double>& shape_mat) {
