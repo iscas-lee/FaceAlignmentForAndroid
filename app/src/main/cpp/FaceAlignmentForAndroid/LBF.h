@@ -58,6 +58,15 @@ class BoundingBox{
             centroid_x = 0;
             centroid_y = 0;
         }; 
+
+        BoundingBox(double left, double top, double right, double bottom) {
+            start_x = left;
+            start_y = top;
+            width = right-left;
+            height = bottom-top;
+            centroid_x = (left+right)/2;
+            centroid_y = (top+bottom)/2;
+        }
 };
 
 

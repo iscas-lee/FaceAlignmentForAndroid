@@ -38,13 +38,11 @@ vector<BoundingBox> FaceTracker::getFaceBox(cv::Mat& srcImg, IMG_CODE srcCode) {
         resize( grayImg, smallImg, smallImg.size(), 0, 0, cv::INTER_LINEAR );
         equalizeHist( smallImg, smallImg );
 
-        opencv_cascade_.detectMultiScale( smallImg, faces,
-            1.1, 2, 0
-            //|CV_HAAR_FIND_BIGGEST_OBJECT
-            //|CV_HAAR_DO_ROUGH_SEARCH
-            |CV_HAAR_SCALE_IMAGE
-            ,
-            cv::Size(30, 30) );
+        opencv_cascade_.detectMultiScale(smallImg, faces,1.1, 2,
+                                         0//|CV_HAAR_FIND_BIGGEST_OBJECT
+                                          //|CV_HAAR_DO_ROUGH_SEARCH
+                                         |CV_HAAR_SCALE_IMAGE
+                                         ,cv::Size(30, 30) );
         for( vector<cv::Rect>::const_iterator r = faces.begin(); r != faces.end(); r++){
             cv::Point center;
             //cv::Scalar color = colors[i%8];
@@ -67,13 +65,7 @@ vector<BoundingBox> FaceTracker::getFaceBox(cv::Mat& srcImg, IMG_CODE srcCode) {
         vector<dlib::rectangle> faces = dlib_detector_(dlibImg);
         for( vector<dlib::rectangle>::const_iterator r = faces.begin(); r != faces.end(); r++){
             //cv::Scalar color = colors[i%8];
-            BoundingBox boundingbox;
-            boundingbox.start_x = r->left;
-            boundingbox.start_y = r->top;
-            boundingbox.width = r->right - r->left;
-            boundingbox.height = r->bottom - r->top;
-            boundingbox.centroid_x = boundingbox.start_x + boundingbox.width/2.0;
-            boundingbox.centroid_y = boundingbox.start_y + boundingbox.height/2.0;
+            BoundingBox boundingbox(r->left(), r->top(), r->right(), r->bottom());
 
             faces_boxes.push_back(boundingbox);
         }

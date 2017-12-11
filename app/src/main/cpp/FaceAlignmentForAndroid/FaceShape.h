@@ -88,8 +88,8 @@ public:
     }
 
     void set(dlib::full_object_detection& shape_dlib) {
-        pixel_vector.resize(shape_dlib.num_parts);
-        for(int i=0; i<shape_dlib.num_parts; i++) {
+        pixel_vector.resize(shape_dlib.num_parts());
+        for(int i=0; i<shape_dlib.num_parts(); i++) {
             pixel_vector[i].row = shape_dlib.part(i).x();
             pixel_vector[i].col = shape_dlib.part(i).y();
         }
