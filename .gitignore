@@ -57,7 +57,9 @@ freeline_project_description.json
 # OpenCV
 OpenCV-android-sdk/
 FaceAlignmentData/
-dlib-19.7/
+
+# dlib
+dlib-19.7/docs/
 
 app/src/main/cpp/.vscode/
 .vscode/

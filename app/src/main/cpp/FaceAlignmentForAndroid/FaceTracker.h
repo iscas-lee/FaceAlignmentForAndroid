@@ -12,10 +12,14 @@
 #include "LBFRegressor.h"
 #include "FaceShape.h"
 
-#include <dlib/opencv.h>
-#include <dlib/image_processing/frontal_face_detector.h>
-#include <dlib/image_processing/render_face_detections.h>
-#include <dlib/image_processing.h>
+#include "opencv2/objdetect.hpp"
+#include "opencv2/highgui.hpp"
+#include "opencv2/imgproc.hpp"
+
+// #include <dlib/opencv.h>
+// #include <dlib/image_processing/frontal_face_detector.h>
+// #include <dlib/image_processing/render_face_detections.h>
+// #include <dlib/image_processing.h>
 
 
 enum IMG_CODE {
@@ -39,8 +43,8 @@ private:
     LBFRegressor lbf_regressor_;
     cv::CascadeClassifier opencv_cascade_;
 
-    dlib::frontal_face_detector dlib_detector_;
-    dlib::shape_predictor dlib_shape_pred_;
+    // dlib::frontal_face_detector dlib_detector_;
+    // dlib::shape_predictor dlib_shape_pred_;
     
     DETECT_METHOD detect_method_;
     SHAPE_METHOD shape_method_;
