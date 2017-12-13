@@ -13,7 +13,7 @@ cmake_minimum_required(VERSION 3.4.1)
 set(OpenCV_DIR ../OpenCV-android-sdk/sdk/native/jni)
 find_package(OpenCV REQUIRED)
 
-include_directories(../dlib-19.7)
+# include_directories(../dlib-19.7)
 include(../dlib-19.7/dlib/cmake)
 
 set(FaceAlignment_DIR src/main/cpp/FaceAlignmentForAndroid)
@@ -34,7 +34,7 @@ add_library( # Sets the name of the library.
 
              # Provides a relative path to your source file(s).
              src/main/cpp/native-lib.cpp
-             ${DLIB_SRC}
+             # ${DLIB_SRC}
              ${FaceAlignment_SRCES})
 
 # Searches for a specified prebuilt library and stores the path as a
@@ -61,5 +61,5 @@ target_link_libraries( # Specifies the target library.
                        # included in the NDK.
                        ${log-lib}
                        ${OpenCV_LIBS}
-                       dlib::dlib
+                       dlib
                        )

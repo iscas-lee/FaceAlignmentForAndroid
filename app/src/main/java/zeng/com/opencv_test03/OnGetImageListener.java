@@ -156,6 +156,7 @@ public class OnGetImageListener implements OnImageAvailableListener {
 
             final Plane[] planes = image.getPlanes();
 
+
             // Initialize the storage bitmaps once when the resolution is known.
             if (mPreviewWdith != image.getWidth() || mPreviewHeight != image.getHeight()) {
                 mPreviewWdith = image.getWidth();
@@ -163,6 +164,7 @@ public class OnGetImageListener implements OnImageAvailableListener {
 
                 Log.d(TAG, String.format("Initializing at size %dx%d", mPreviewWdith, mPreviewHeight));
                 mRGBBytes = new int[mPreviewWdith * mPreviewHeight];
+                //mRGBframeBitmap = Bitmap.createBitmap(mPreviewWdith, mPreviewHeight);
                 mRGBframeBitmap = Bitmap.createBitmap(mPreviewWdith, mPreviewHeight, Config.ARGB_8888);
                 mCroppedBitmap = Bitmap.createBitmap(INPUT_SIZE, INPUT_SIZE, Config.ARGB_8888);
 
@@ -179,17 +181,17 @@ public class OnGetImageListener implements OnImageAvailableListener {
             final int yRowStride = planes[0].getRowStride();
             final int uvRowStride = planes[1].getRowStride();
             final int uvPixelStride = planes[1].getPixelStride();
-            ImageUtils.convertYUV420ToARGB8888(
-                    mYUVBytes[0],
-                    mYUVBytes[1],
-                    mYUVBytes[2],
-                    mRGBBytes,
-                    mPreviewWdith,
-                    mPreviewHeight,
-                    yRowStride,
-                    uvRowStride,
-                    uvPixelStride,
-                    false);
+//            ImageUtils.convertYUV420ToARGB8888(
+//                    mYUVBytes[0],
+//                    mYUVBytes[1],
+//                    mYUVBytes[2],
+//                    mRGBBytes,
+//                    mPreviewWdith,
+//                    mPreviewHeight,
+//                    yRowStride,
+//                    uvRowStride,
+//                    uvPixelStride,
+//                    false);
 
             image.close();
         } catch (final Exception e) {

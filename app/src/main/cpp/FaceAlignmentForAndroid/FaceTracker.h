@@ -16,10 +16,10 @@
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgproc.hpp"
 
-// #include <dlib/opencv.h>
-// #include <dlib/image_processing/frontal_face_detector.h>
-// #include <dlib/image_processing/render_face_detections.h>
-// #include <dlib/image_processing.h>
+#include <dlib/opencv.h>
+#include <dlib/image_processing/frontal_face_detector.h>
+#include <dlib/image_processing/render_face_detections.h>
+#include <dlib/image_processing.h>
 
 
 enum IMG_CODE {
@@ -43,15 +43,15 @@ private:
     LBFRegressor lbf_regressor_;
     cv::CascadeClassifier opencv_cascade_;
 
-    // dlib::frontal_face_detector dlib_detector_;
-    // dlib::shape_predictor dlib_shape_pred_;
+    dlib::frontal_face_detector dlib_detector_;
+    dlib::shape_predictor dlib_shape_pred_;
     
     DETECT_METHOD detect_method_;
     SHAPE_METHOD shape_method_;
 
     int smallImg_row_;
     int faces_max_num_;  
-    //std::vector<std::vector<KalmanParam[2]> > kalman_params_;
+    // std::vector<std::vector<KalmanParam[2]> > kalman_params_;
 
     int cvImg2Code(IMG_CODE srcCode, IMG_CODE resCode);
 

@@ -7,16 +7,11 @@
 #include "../algs.h"
 #include <algorithm>
 #include <iostream>
+#include <cmath>
 #include "../serialize.h"
 #include "vector.h"
 #include "../image_processing/generic_image.h"
 
-namespace  std {
-    double round(double toRound)
-    {
-        return std::ceil(toRound - 0.5);
-    }
-}
 
 namespace dlib
 {

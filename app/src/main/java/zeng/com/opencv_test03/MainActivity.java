@@ -42,7 +42,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-//import hugo.weaving.DebugLog;
+import hugo.weaving.DebugLog;
 
 @EActivity(R.layout.activity_main)
 public class MainActivity extends AppCompatActivity {
@@ -103,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
     @Click({R.id.fab})
     protected void launchGallery() {
         Toast.makeText(MainActivity.this, "Pick one image", Toast.LENGTH_SHORT).show();
+        Log.d(TAG,"pick one image");
         Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
     }
@@ -118,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
      *
      * @param activity
      */
-    //@DebugLog
+    @DebugLog
     private static boolean verifyPermissions(Activity activity) {
         // Check if we have write permission
         int write_permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -141,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /* Checks if external storage is available for read and write */
-    //@DebugLog
+    @DebugLog
     private boolean isExternalStorageWritable() {
         String state = Environment.getExternalStorageState();
         if (Environment.MEDIA_MOUNTED.equals(state)) {
@@ -151,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /* Checks if external storage is available to at least read */
-    //@DebugLog
+    @DebugLog
     private boolean isExternalStorageReadable() {
         String state = Environment.getExternalStorageState();
         if (Environment.MEDIA_MOUNTED.equals(state) ||
@@ -161,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
-    //@DebugLog
+    @DebugLog
     protected void demoStaticImage() {
         if (mTestImgPath != null) {
             Log.d(TAG, "demoStaticImage() launch a task to det");
@@ -272,7 +273,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //@DebugLog
+    @DebugLog
     protected BitmapDrawable drawRect(String path, /*List<VisionDetRet> results,*/ int color) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inSampleSize = 1;
@@ -328,7 +329,7 @@ public class MainActivity extends AppCompatActivity {
         return new BitmapDrawable(getResources(), bm);
     }
 
-    //@DebugLog
+    @DebugLog
     protected Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
         Bitmap resizedBitmap = Bitmap.createScaledBitmap(bm, newWidth, newHeight, true);
         return resizedBitmap;
