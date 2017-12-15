@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -39,6 +40,10 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,10 +65,12 @@ public class MainActivity extends AppCompatActivity {
     private static String[] PERMISSIONS_REQ = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.MOUNT_UNMOUNT_FILESYSTEMS,
             Manifest.permission.CAMERA
     };
 
     protected String mTestImgPath;
+
     // UI
     @ViewById(R.id.material_listview)
     protected MaterialListView mListView;
@@ -74,11 +81,12 @@ public class MainActivity extends AppCompatActivity {
     @ViewById(R.id.toolbar)
     protected Toolbar mToolbar;
 
-    // FaceDet mFaceDet;
+     FaceDetect mFaceDet;
     // PedestrianDet mPersonDet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         mListView = (MaterialListView) findViewById(R.id.material_listview);
         setSupportActionBar(mToolbar);
@@ -92,6 +100,8 @@ public class MainActivity extends AppCompatActivity {
         if (currentapiVersion >= Build.VERSION_CODES.M) {
             verifyPermissions(this);
         }
+
+        copyAssets();
     }
 
     @AfterViews
@@ -124,11 +134,13 @@ public class MainActivity extends AppCompatActivity {
         // Check if we have write permission
         int write_permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         int read_persmission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int file_persmission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.MOUNT_UNMOUNT_FILESYSTEMS);
         int camera_permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.CAMERA);
 
         if (write_permission != PackageManager.PERMISSION_GRANTED ||
                 read_persmission != PackageManager.PERMISSION_GRANTED ||
-                camera_permission != PackageManager.PERMISSION_GRANTED) {
+                camera_permission != PackageManager.PERMISSION_GRANTED ||
+                file_persmission != PackageManager.PERMISSION_GRANTED) {
             // We don't have permission so prompt the user
             ActivityCompat.requestPermissions(
                     activity,
@@ -232,9 +244,11 @@ public class MainActivity extends AppCompatActivity {
         //     FileUtils.copyFileFromRawToOthers(getApplicationContext(), R.raw.shape_predictor_68_face_landmarks, targetPath);
         // }
         // Init
-        // if (mPersonDet == null) {
-        //     mPersonDet = new PedestrianDet();
-        // }
+         if (mFaceDet == null) {
+             mFaceDet = new FaceDetect();
+             String modelPathString = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "FaceAlignmentTest";
+             mFaceDet.init(modelPathString);
+         }
         // if (mFaceDet == null) {
         //    mFaceDet = new FaceDet(Constants.getFaceShapeModelPath());
         // }
@@ -303,6 +317,24 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "resizeRatio " + resizeRatio);
         }
 
+        int faceNum = mFaceDet.detect(bm);
+        if (faceNum != 0) {
+            float resizeRatio1 = 1.0f;
+            Canvas canvas = new Canvas(bm);
+            Paint paint = new Paint();
+            paint.setColor(color);
+            paint.setStrokeWidth(2);
+            paint.setStyle(Paint.Style.STROKE);
+            for (final FaceDetect.FaceLandmark faceLandmark : mFaceDet.getFaceLandmark()) {
+                // Draw landmark
+                for (int i=0; i<FaceDetect.LANDMARK_NUM; i++) {
+                    int pointX = (int) (faceLandmark.points[i].x * resizeRatio1);
+                    int pointY = (int) (faceLandmark.points[i].y * resizeRatio1);
+                    canvas.drawCircle(pointX, pointY, 2, paint);
+                }
+            }
+        }
+
         // // Create canvas to draw
         // Canvas canvas = new Canvas(bm);
         // Paint paint = new Paint();
@@ -333,6 +365,64 @@ public class MainActivity extends AppCompatActivity {
     protected Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
         Bitmap resizedBitmap = Bitmap.createScaledBitmap(bm, newWidth, newHeight, true);
         return resizedBitmap;
+    }
+
+    private void copyAssets() {
+        AssetManager assetManager = getAssets();
+        String[] files = new String[]{"haarcascade_frontalface_alt.xml","lbf.model","regressor.model","shape_predictor_68_face_landmarks.dat"};
+        try {
+            String[] assetManagerfiles = assetManager.list("");
+            for(String filename:assetManagerfiles) Log.i(TAG,filename);
+        } catch (IOException e) {
+            Log.e("tag", "Failed to get asset file list.", e);
+        }
+
+        String modelPathString = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "FaceAlignmentTest";
+        File modelPathFile = new File(modelPathString);
+        if(!modelPathFile.exists()) {
+            modelPathFile.mkdirs();
+        }
+
+        if (files != null) for (String filename : files) {
+            InputStream in = null;
+            OutputStream out = null;
+            try {
+                String targetPath = modelPathString + File.separator + filename;
+                if(!new File(targetPath).exists()) {
+                    in = assetManager.open(filename);
+                    Log.i(TAG,"copy "+filename+"to "+modelPathString+ File.separator);
+                    File outFile = new File(modelPathString + File.separator + filename);
+                    out = new FileOutputStream(outFile);
+                    copyFile(in, out);
+                }
+
+            } catch(IOException e) {
+                Log.e("tag", "Failed to copy asset file: " + filename, e);
+            }
+            finally {
+                if (in != null) {
+                    try {
+                        in.close();
+                    } catch (IOException e) {
+                        // NOOP
+                    }
+                }
+                if (out != null) {
+                    try {
+                        out.close();
+                    } catch (IOException e) {
+                        // NOOP
+                    }
+                }
+            }
+        }
+    }
+    private void copyFile(InputStream in, OutputStream out) throws IOException {
+        byte[] buffer = new byte[1024];
+        int read;
+        while((read = in.read(buffer)) != -1){
+            out.write(buffer, 0, read);
+        }
     }
 
     /**

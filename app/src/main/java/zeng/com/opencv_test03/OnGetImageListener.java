@@ -20,6 +20,7 @@ import android.media.Image;
 import android.media.Image.Plane;
 import android.media.ImageReader;
 import android.media.ImageReader.OnImageAvailableListener;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Trace;
 import android.util.Log;
@@ -47,6 +48,7 @@ public class OnGetImageListener implements OnImageAvailableListener {
     private static final int IMAGE_MEAN = 117;
     private static final String TAG = "OnGetImageListener";
 
+
     private int mScreenRotation = 90;
 
     private int mPreviewWdith = 0;
@@ -61,6 +63,8 @@ public class OnGetImageListener implements OnImageAvailableListener {
 
     private Context mContext;
     // private FaceDet mFaceDet;
+    private FaceDetect mFaceDetect;
+
     private TrasparentTitleView mTransparentTitleView;
     private FloatingCameraWindow mWindow;
     private Paint mFaceLandmardkPaint;
@@ -74,6 +78,10 @@ public class OnGetImageListener implements OnImageAvailableListener {
         this.mTransparentTitleView = scoreView;
         this.mInferenceHandler = handler;
         // mFaceDet = new FaceDet(Constants.getFaceShapeModelPath());
+        mFaceDetect = new FaceDetect();
+        String modelPathString = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "FaceAlignmentTest";
+        mFaceDetect.init(modelPathString);
+
         mWindow = new FloatingCameraWindow(mContext);
 
         mFaceLandmardkPaint = new Paint();
@@ -219,34 +227,33 @@ public class OnGetImageListener implements OnImageAvailableListener {
                         //     FileUtils.copyFileFromRawToOthers(mContext, R.raw.shape_predictor_68_face_landmarks, Constants.getFaceShapeModelPath());
                         // }
 
-                        // long startTime = System.currentTimeMillis();
-                        // List<VisionDetRet> results;
-                        // synchronized (OnGetImageListener.this) {
-                        //     results = mFaceDet.detect(mCroppedBitmap);
-                        // }
-                        // long endTime = System.currentTimeMillis();
-                        // mTransparentTitleView.setText("Time cost: " + String.valueOf((endTime - startTime) / 1000f) + " sec");
-                        // // Draw on bitmap
-                        // if (results != null) {
-                        //     for (final VisionDetRet ret : results) {
-                        //         float resizeRatio = 1.0f;
-                        //         Rect bounds = new Rect();
-                        //         bounds.left = (int) (ret.getLeft() * resizeRatio);
-                        //         bounds.top = (int) (ret.getTop() * resizeRatio);
-                        //         bounds.right = (int) (ret.getRight() * resizeRatio);
-                        //         bounds.bottom = (int) (ret.getBottom() * resizeRatio);
-                        //         Canvas canvas = new Canvas(mCroppedBitmap);
-                        //         canvas.drawRect(bounds, mFaceLandmardkPaint);
-
-                        //         // Draw landmark
-                        //         ArrayList<Point> landmarks = ret.getFaceLandmarks();
-                        //         for (Point point : landmarks) {
-                        //             int pointX = (int) (point.x * resizeRatio);
-                        //             int pointY = (int) (point.y * resizeRatio);
-                        //             canvas.drawCircle(pointX, pointY, 2, mFaceLandmardkPaint);
-                        //         }
-                        //     }
-                        // }
+                         long startTime = System.currentTimeMillis();
+                         int faceNum = 0;
+                         synchronized (OnGetImageListener.this) {
+                             faceNum = mFaceDetect.detect(mCroppedBitmap);
+                         }
+                         long endTime = System.currentTimeMillis();
+                         mTransparentTitleView.setText("Time cost: " + String.valueOf((endTime - startTime) / 1000f) + " sec");
+                         // Draw on bitmap
+                         if (faceNum != 0) {
+                             Canvas canvas = new Canvas(mCroppedBitmap);
+                             for (final FaceDetect.FaceLandmark faceLandmark : mFaceDetect.getFaceLandmark()) {
+                                 float resizeRatio = 1.0f;
+//                                 Rect bounds = new Rect();
+//                                 bounds.left = (int) (ret. * resizeRatio);
+//                                 bounds.top = (int) (ret.getTop() * resizeRatio);
+//                                 bounds.right = (int) (ret.getRight() * resizeRatio);
+//                                 bounds.bottom = (int) (ret.getBottom() * resizeRatio);
+//                                 canvas.drawRect(bounds, mFaceLandmardkPaint);
+                                 // Draw landmark
+//                                 ArrayList<Point> landmarks = ret.getFaceLandmarks();
+                                 for (int i=0; i<FaceDetect.LANDMARK_NUM; i++) {
+                                     int pointX = (int) (faceLandmark.points[i].x * resizeRatio);
+                                     int pointY = (int) (faceLandmark.points[i].y * resizeRatio);
+                                     canvas.drawCircle(pointX, pointY, 2, mFaceLandmardkPaint);
+                                 }
+                             }
+                         }
 
                         mWindow.setRGBBitmap(mCroppedBitmap);
                         mIsComputing = false;

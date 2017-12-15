@@ -11,17 +11,17 @@ void FaceTracker::init(std::string modelPath, int faces_max_num, DETECT_METHOD d
     faces_max_num_ = faces_max_num;
 
     if(detect_method_ == DETECT_OPENCV) {
-        opencv_cascade_.load(modelPath+"haarcascade_frontalface_alt.xml");
+        opencv_cascade_.load(modelPath+"/haarcascade_frontalface_alt.xml");
     }
     else if(detect_method_ == DETECT_DLIB) {
         dlib_detector_ = dlib::get_frontal_face_detector();
     }
 
     if(shape_method_ == SHAPE_LBF3000) {
-        lbf_regressor_.Load(modelPath+"LBF.model", modelPath+"Regressor.model");
+        lbf_regressor_.Load(modelPath+"/lbf.model", modelPath+"/regressor.model");
     }
     else if(shape_method_ == SHAPE_DLIB) {
-        dlib::deserialize(modelPath +"shape_predictor_68_face_landmarks.dat") >> dlib_shape_pred_;
+        dlib::deserialize(modelPath +"/shape_predictor_68_face_landmarks.dat") >> dlib_shape_pred_;
     }   
 }
 

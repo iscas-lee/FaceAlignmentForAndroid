@@ -9,6 +9,12 @@
 #include "ImageUtils/yuv2rgb.h"
 #include "ImageUtils/rgb2yuv.h"
 
+#include <android/log.h>
+
+#define LOG_TAG "jni.out"
+#define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
+#define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
+
 #define IMAGEUTILS_METHOD(METHOD_NAME) \
   Java_zeng_com_opencv_1test03_ImageUtils_##METHOD_NAME  // NOLINT
 
@@ -48,6 +54,8 @@ JNIEXPORT void JNICALL
 IMAGEUTILS_METHOD(convertYUV420SPToARGB8888)(
         JNIEnv* env, jobject, jbyteArray input, jintArray output,
         jint width, jint height, jboolean halfSize) {
+    LOGI("convertYUV420SPToARGB8888 %d, %d",width,height);
+
     jboolean inputCopy = JNI_FALSE;
     jbyte* const i = env->GetByteArrayElements(input, &inputCopy);
 
