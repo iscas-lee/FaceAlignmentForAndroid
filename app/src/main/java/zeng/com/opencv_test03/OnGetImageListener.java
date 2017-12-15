@@ -181,17 +181,17 @@ public class OnGetImageListener implements OnImageAvailableListener {
             final int yRowStride = planes[0].getRowStride();
             final int uvRowStride = planes[1].getRowStride();
             final int uvPixelStride = planes[1].getPixelStride();
-//            ImageUtils.convertYUV420ToARGB8888(
-//                    mYUVBytes[0],
-//                    mYUVBytes[1],
-//                    mYUVBytes[2],
-//                    mRGBBytes,
-//                    mPreviewWdith,
-//                    mPreviewHeight,
-//                    yRowStride,
-//                    uvRowStride,
-//                    uvPixelStride,
-//                    false);
+            ImageUtils.convertYUV420ToARGB8888(
+                    mYUVBytes[0],
+                    mYUVBytes[1],
+                    mYUVBytes[2],
+                    mRGBBytes,
+                    mPreviewWdith,
+                    mPreviewHeight,
+                    yRowStride,
+                    uvRowStride,
+                    uvPixelStride,
+                    false);
 
             image.close();
         } catch (final Exception e) {

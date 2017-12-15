@@ -64,3 +64,4 @@ Java_zeng_com_opencv_1test03_MainActivity_rgb2Gray(
 
     return 1;
 }
+

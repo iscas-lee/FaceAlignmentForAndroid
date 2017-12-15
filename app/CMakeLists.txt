@@ -26,6 +26,9 @@ aux_source_directory(${LiblinearBlas_DIR} LiblinearBlas_SRC)
 
 set(FaceAlignment_SRCES ${FaceAlignment_SRC} ${Liblinear_SRC} ${LiblinearBlas_SRC})
 
+set(ImageUtils_DIR src/main/cpp/ImageUtils)
+aux_source_directory(${ImageUtils_DIR} ImageUtils_SRC)
+
 add_library( # Sets the name of the library.
              native-lib
 
@@ -34,8 +37,10 @@ add_library( # Sets the name of the library.
 
              # Provides a relative path to your source file(s).
              src/main/cpp/native-lib.cpp
+             src/main/cpp/ImageUtils-lib.cpp
              # ${DLIB_SRC}
-             ${FaceAlignment_SRCES})
+             ${FaceAlignment_SRCES}
+             ${ImageUtils_SRC})
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
